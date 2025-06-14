@@ -1,0 +1,186 @@
+import json
+
+openapi_data = {
+    "openapi": "3.1.0",
+    "info": {
+        "title": "台灣雙鐵查詢 API",
+        "description": "整合台鐵與高鐵 API 功能於單一動作集中，支援查詢雙鐵時刻與站名清單",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://superiorapis-creator.cteam.com.tw"
+        }
+    ],
+    "paths": {
+        "/manager/feature/proxy/84cd00ed963b/pub_84cd010f19dc": {
+            "post": {
+                "summary": "台鐵時刻表查詢",
+                "operationId": "taiwan_railway",
+                "requestBody": {
+                    "description": "輸入指定上下站位置以及時間。",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "start_station": {"type": "string"},
+                                    "end_station": {"type": "string"},
+                                    "datetime": {"type": "string", "format": "date-time"},
+                                    "train_type": {
+                                        "type": "integer",
+                                        "enum": [0, 1, 2]
+                                    }
+                                },
+                                "required": ["start_station", "end_station"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "train_type": {"type": "string"},
+                                            "train_code": {"type": "string"},
+                                            "originating_station": {"type": "string"},
+                                            "terminal_station": {"type": "string"},
+                                            "departure_time": {"type": "string"},
+                                            "arrival_time": {"type": "string"},
+                                            "travel_time": {"type": "string"},
+                                            "via": {"type": "string"},
+                                            "adult_price": {"type": "integer"},
+                                            "discount_price": {"type": "integer"}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/feature/proxy/84cd00ed963b/pub_84cd08aa0ab8": {
+            "post": {
+                "summary": "台鐵車站列表",
+                "operationId": "taiwan_railway_station",
+                "requestBody": {
+                    "description": "傳入欲查詢縣市代碼",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "city_code": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "M", "N", "O", "P", "Q", "T", "U", "V"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/feature/proxy/84cd6fc88516/pub_84cd6fdbad95": {
+            "post": {
+                "summary": "高鐵時刻表查詢",
+                "operationId": "taiwan_high_speed_rail",
+                "requestBody": {
+                    "description": "輸入指定上下站位置以及時間。",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "start_station_no": {
+                                        "type": "integer",
+                                        "enum": [1,2,3,4,5,6,7,8,9,10,11,12]
+                                    },
+                                    "end_station_no": {
+                                        "type": "integer",
+                                        "enum": [1,2,3,4,5,6,7,8,9,10,11,12]
+                                    },
+                                    "datetime": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "required": ["start_station_no", "end_station_no"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "start_station": {"type": "string"},
+                                        "end_station": {"type": "string"},
+                                        "datetime": {"type": "string"},
+                                        "train_item": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {"type": "string"},
+                                                    "departure_time": {"type": "string"},
+                                                    "destination_time": {"type": "string"},
+                                                    "duration": {"type": "string"},
+                                                    "non_reserved_Car": {"type": "string"},
+                                                    "note": {"type": "string"},
+                                                    "station_info": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "station_no": {"type": "integer"},
+                                                                "name": {"type": "string"},
+                                                                "departure_time": {"type": "string"}
+                                                            }
+                                                        }
+                                                    },
+                                                    "cross_night": {"type": "boolean"}
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+with open("dual-train-api.json", "w", encoding="utf-8") as f:
+    json.dump(openapi_data, f, ensure_ascii=False, indent=2)
+
+print("✅ dual-train-api.json 檔案已建立成功！")
